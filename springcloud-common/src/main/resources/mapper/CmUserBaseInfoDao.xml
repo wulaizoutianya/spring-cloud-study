@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+       "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="commonserver.dao.CmUserBaseInfoDao">
+
+	<!--查询用户的所有菜单ID -->
+	<select id="queryUserInfo" resultType="commonserver.entity.CmUserBaseInfoEntity">
+		select o.id,
+		o.user_ch_name, o.user_sex from cm_user_base_info o where 1 = 1
+	</select>
+
+	<select id="queryOneUserInfo" resultType="commonserver.entity.CmUserBaseInfoEntity">
+		select o.id,
+		o.user_ch_name, o.user_sex from cm_user_base_info o where 1 = 1 and
+		o.user_en_name = #{name}
+	</select>
+
+	<select id="queryUserOrganInfo" resultType="java.util.HashMap">
+		select u.id,
+		u.user_ch_name, o.organ_name from cm_user_base_info u,
+		cm_organ_base_info o
+		where u.user_organ_id = o.id and u.user_organ_id =
+		#{arg0} and
+		u.user_organ_name = #{arg1}
+	</select>
+
+	<select id="queryByMapUserOrganInfo" resultType="java.util.HashMap"
+		parameterType="java.util.Map">
+		select u.id, u.user_ch_name, o.organ_name from cm_user_base_info u,
+		cm_organ_base_info o
+		where u.user_organ_id = o.id
+		<if test="arg0 != null">
+			and u.user_organ_id = #{arg0}
+		</if>
+		<if test="arg1 != null">
+			and u.user_account = #{arg1}
+		</if>
+	</select>
+
+	<select id="queryByListUserOrganInfo" resultType="java.util.HashMap">
+		select u.id, u.user_ch_name, o.organ_name from cm_user_base_info u,
+		cm_organ_base_info o
+		where u.user_organ_id = o.id and u.user_account in
+		<foreach item="val" index="aad" collection="list" open="("
+			separator="," close=")">
+			#{val}
+		</foreach>
+	</select>
+
+	<insert id="insertCmUserInfo" parameterType="java.util.HashMap">
+		insert into cm_user_base_info(
+			user_en_name ,
+			user_ch_name ,
+			<if test="userAccount != null">
+				user_account ,
+			</if>
+			<if test="userPwd != null">
+				user_pwd ,
+			</if>
+			<if test="enablePwd != null">
+				enable_pwd ,
+			</if>
+			<if test="userSex != null">
+				user_sex ,
+			</if>
+			<if test="userOrganId != null">
+				user_organ_id ,
+			</if>
+			<if test="userOrganName != null">
+				user_organ_name ,
+			</if>
+			created_by ,
+			updated_by ,
+			created_date ,
+			updated_date) 
+		values (
+			#{userEnName},
+			#{userChName},
+			<if test="userAccount != null">
+				#{userAccount},
+			</if>
+			<if test="userPwd != null">
+				#{userPwd},
+			</if>
+			<if test="enablePwd != null">
+				#{enablePwd},
+			</if>
+			<if test="userSex != null">
+				#{userSex},
+			</if>
+			<if test="userOrganId != null">
+				#{userOrganId},
+			</if>
+			<if test="userOrganName != null">
+				#{userOrganName},
+			</if>
+			#{createdBy},
+			#{updatedBy},
+			#{createdDate},
+			#{updatedDate}
+		)
+	</insert>
+
+</mapper>

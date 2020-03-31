@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: common-server
+  
+server:
+  port: 8802
+  
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://qq:541440124@localhost:8801/eureka/
+      
+#配置Mybatis
+mybatis:
+  type-aliases-package: commonserver.entity
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    #开启驼峰命名转换，不需要我们关心怎么进行字段匹配，mybatis会自动识别`大写字母与下划线`
+    map-underscore-to-camel-case: true
+
+druid:
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://192.168.238.132:3306/test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&connectTimeout=3000&allowPublicKeyRetrieval=yes
+  username: root
+  password: SIEmysql300687_
+  # 配置初始化大小、最小、最大
+  initial-size: 5
+  min-idle: 5
+  max-active: 5
+  #配置获取连接等待超时的时间
+  max-wait: 60000
+  #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+  time-between-eviction-runs-millis: 60000
+  #配置一个连接在池中最小生存的时间，单位是毫秒
+  min-evictable-idle-time-millis: 300000
+  #测试连接
+  validation-query: SELECT 'x'
+  #申请连接的时候检测，建议配置为true，不影响性能，并且保证安全性
+  test-while-idle: true
+  #获取连接时执行检测，建议关闭，影响性能
+  test-on-borrow: false
+  #归还连接时执行检测，建议关闭，影响性能
+  test-on-return: false
+  #是否开启PSCache，PSCache对支持游标的数据库性能提升巨大，oracle建议开启，mysql下建议关闭
+  pool-prepared-statements: false
+  #开启poolPreparedStatements后生效
+  max-pool-prepared-statement-per-connection-size: 20
+  #配置扩展插件，常用的插件有=>stat:监控统计  slf4j:日志  wall:防御sql注入
+  filters: stat,wall,slf4j
+  # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+  connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  
+#日志的配置
+logging:
+  level:
+    druid.sql.Statement: debug
+    commonserver: debug
