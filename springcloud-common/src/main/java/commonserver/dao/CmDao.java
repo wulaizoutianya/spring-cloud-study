@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,12 @@ public class CmDao {
      * 但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。
      */
     @Autowired
-    private SqlSessionTemplate sqlSessionTemplate;
+    @Qualifier("sqlSessionWriteTemplate")
+    private SqlSessionTemplate sqlSessionWriteTemplate;
+
+    @Autowired
+    @Qualifier("sqlSessionReadTemplate")
+    private SqlSessionTemplate sqlSessionReadTemplate;
     
     /**
      * 插入一个对象
@@ -38,20 +44,20 @@ public class CmDao {
      * @throws Exception	异常
      */
     public int insertOneObject(String sql, Object obj) throws Exception {
-        return sqlSessionTemplate.insert(sql, obj);
+        return sqlSessionWriteTemplate.insert(sql, obj);
     }
     
     /**
      * 插入多个对象
      * 
      * @param sql 	需要执行的sql，必须和mapper标签的namespace属性的值相对应
-     * @param obj	需要插入的对象集合
+     * @param objs	需要插入的对象集合
      * @return		返回插入结果
      * @throws Exception	异常
      */
     @SuppressWarnings("rawtypes")
 	public int insertManyObject(String sql, List objs) throws Exception {
-    	 SqlSessionFactory sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+    	 SqlSessionFactory sqlSessionFactory = sqlSessionWriteTemplate.getSqlSessionFactory();
          //批量执行器
          SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH,false);
          try{
@@ -78,20 +84,20 @@ public class CmDao {
      * @throws Exception	异常
      */
     public int updateOneObject(String sql, Object obj) throws Exception {
-        return sqlSessionTemplate.update(sql, obj);
+        return sqlSessionWriteTemplate.update(sql, obj);
     }
 
     /**
      * 更新多个对象
      * 
      * @param sql 	需要执行的sql，必须和mapper标签的namespace属性的值相对应
-     * @param obj	需要更新的对象集合
+     * @param objs	需要更新的对象集合
      * @return		返回更新结果
      * @throws Exception	异常
      */
     @SuppressWarnings("rawtypes")
 	public void batchUpdate(String sql, List objs)throws Exception{
-        SqlSessionFactory sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+        SqlSessionFactory sqlSessionFactory = sqlSessionWriteTemplate.getSqlSessionFactory();
         //批量执行器
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH,false);
         try{
@@ -117,20 +123,20 @@ public class CmDao {
      * @throws Exception	异常
      */
     public int deleteOneObject(String sql, Object obj) throws Exception {
-        return sqlSessionTemplate.delete(sql, obj);
+        return sqlSessionWriteTemplate.delete(sql, obj);
     }
     
     /**
      * 删除多个对象
      * 
      * @param sql 	需要执行的sql，必须和mapper标签的namespace属性的值相对应
-     * @param obj	需要删除的对象集合
+     * @param objs	需要删除的对象集合
      * @return		返回删除结果
      * @throws Exception	异常
      */
     @SuppressWarnings("rawtypes")
 	public int deleteManyObject(String sql, List objs) throws Exception {
-        return sqlSessionTemplate.delete(sql, objs);
+        return sqlSessionWriteTemplate.delete(sql, objs);
     }
     
     /**
@@ -142,7 +148,7 @@ public class CmDao {
      * @throws Exception	异常
      */
     public Object selectOneObject(String sql, Object obj){
-        return sqlSessionTemplate.selectOne(sql, obj);
+        return sqlSessionReadTemplate.selectOne(sql, obj);
     }
     /**
      * 查找返回多个对象
@@ -154,6 +160,6 @@ public class CmDao {
      */
     @SuppressWarnings("rawtypes")
 	public List selectListObject(String sql, Object obj){
-        return sqlSessionTemplate.selectList(sql, obj);
+        return sqlSessionReadTemplate.selectList(sql, obj);
     }
 }

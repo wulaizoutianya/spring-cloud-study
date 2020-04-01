@@ -6,7 +6,7 @@ public enum UserSex {
 	
 	String value;
 	
-	private UserSex(String value) {
+	UserSex(String value) {
 		this.value = value;
 	}
 
